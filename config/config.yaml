@@ -1,0 +1,81 @@
+# =====================================================================
+# Configuração geral do experimento de contagem de tráfego
+# Todos os scripts leem este arquivo. Mudou algo aqui? Registre no
+# trabalho, porque estes valores fazem parte da metodologia.
+# =====================================================================
+
+pastas:
+  # Vídeos originais ficam FORA do repositório e fora do OneDrive
+  # ("~" = pasta do usuário, ex.: C:\Users\<voce>).
+  videos: "~/dados_visao/videos"
+  # Vídeos com as caixas desenhadas (opcional, também fora do repositório).
+  videos_anotados: "~/dados_visao/videos_anotados"
+  # Pesos dos modelos YOLO (baixados automaticamente na 1ª execução).
+  modelos: "modelos"
+  # Saídas do projeto (estas vão para o GitHub).
+  resultados: "resultados"
+  # Clipes curtos com o YOLO contando (apresentação). Têm rostos/placas: fora do repositório.
+  videos_demo: "~/dados_visao/videos_demo"
+
+# Os dois tamanhos de modelo comparados (família YOLO26 da Ultralytics).
+modelos:
+  - yolo26n   # nano: menor e mais rápido
+  - yolo26l   # large: maior e, em tese, mais preciso
+
+deteccao:
+  imgsz: 640          # tamanho da imagem de entrada do modelo (padrão do YOLO)
+  conf: 0.1           # confiança mínima repassada ao rastreador (ByteTrack usa as fracas também)
+  iou: 0.7            # padrão da Ultralytics
+  half: true          # meia precisão (FP16) na GPU: mais rápido, perda de precisão desprezível
+  dispositivo: 0      # 0 = primeira GPU NVIDIA; "cpu" para forçar CPU
+  rastreador: "bytetrack.yaml"
+
+# Classes de interesse -> id da classe no conjunto COCO (em que o YOLO foi treinado).
+classes:
+  carro: 2
+  moto: 3
+  bicicleta: 1
+  pessoa: 0
+  cachorro: 16
+  onibus: 5
+  caminhao: 7
+
+contagem:
+  # Trilhas com menos quadros do que isso são descartadas (ruído).
+  min_quadros_trilha: 3
+  # Pessoa "montada": fração da caixa da pessoa que fica dentro da caixa de
+  # uma moto/bicicleta no mesmo quadro.
+  sobreposicao_montado: 0.3
+  # Se a pessoa esteve "montada" em pelo menos esta fração dos quadros da
+  # trilha, ela é considerada condutor/passageiro e NÃO é contada como pessoa.
+  frac_montado_min: 0.5
+  # Pessoa com pelo menos esta fração da caixa DENTRO de carro/ônibus/caminhão
+  # = motorista/passageiro visto pela janela (mesma regra de fração dos quadros acima).
+  sobreposicao_em_veiculo: 0.9
+  # Duas trilhas com caixas quase iguais (IoU >= este valor) no quadro do
+  # cruzamento = mesmo veículo detectado duas vezes -> conta uma vez.
+  # 0.7 é alto o bastante para NÃO juntar dois carros lado a lado em faixas vizinhas.
+  iou_duplicada: 0.7
+  # Deslocamento mínimo (px) da trilha atravessando a linha, do 1º ao último quadro.
+  # Evita contar carro ESTACIONADO em cima da linha quando a caixa dele "pula"
+  # por oclusão. 60 px = ~5% da largura de um vídeo 1280x720; quem passa de
+  # verdade anda centenas de pixels.
+  min_deslocamento_px: 60
+  # Folga nas pontas da linha (5% do comprimento) para não perder quem
+  # cruza bem na extremidade.
+  margem_segmento: 0.05
+
+analise:
+  # Classes que a contagem manual/gabarito juntou numa só. O YOLO continua
+  # detectando separado (eventos.csv guarda a classe original); na hora de
+  # comparar, as classes listadas são somadas na classe agrupada.
+  agrupar_classes:
+    caminhao_onibus: [caminhao, onibus]
+
+comparacao:
+  # Janela de tempo (s) para considerar que o YOLO e o gabarito marcaram o
+  # MESMO cruzamento.
+  tolerancia_s: 1.5
+  # Minutos revisados no gabarito quando videos.csv não informar outros.
+  # A contagem manual é só o TOTAL do vídeo, então o gabarito precisa cobrir a janela inteira.
+  minutos_gabarito_padrao: "1-10"

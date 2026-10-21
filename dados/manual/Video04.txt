@@ -1,0 +1,9 @@
+Video04
+Horário: 18:04 as 18:14
+
+Carros = 78
+Motos = 40
+Pessoas = 23
+Bicicletas = 8
+Caminhões ou Ônibus = 0
+Cachorros = 2

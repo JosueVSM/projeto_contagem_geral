@@ -1,0 +1,9 @@
+Video01
+Horário: 12:10 as 12:20
+
+Carros = 74
+Motos = 25
+Pessoas = 20
+Bicicletas = 3
+Caminhões ou Ônibus = 3
+Cachorros = 0

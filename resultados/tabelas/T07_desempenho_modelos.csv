@@ -1,0 +1,11 @@
+﻿video;periodo;modelo;quadros_processados;tempo_total_s;quadros_por_segundo;ms_por_quadro_deteccao_rastreamento_mediana;ms_inferencia_mediana;tempo_real_x;memoria_gpu_pico_mb;gpu
+v1_meio_dia;12h10;yolo26n;18093,0;242,37;74,65;11,792;7,965;2,49;43,7;NVIDIA GeForce RTX 4050 Laptop GPU
+v1_meio_dia;12h10;yolo26l;18093,0;322,44;56,11;16,429;12,855;1,87;176,1;NVIDIA GeForce RTX 4050 Laptop GPU
+v2_tarde_1;15h07;yolo26n;18644,0;244,56;76,23;11,755;7,932;2,54;100,5;NVIDIA GeForce RTX 4050 Laptop GPU
+v2_tarde_1;15h07;yolo26l;18644,0;336,6;55,39;16,223;12,766;1,85;235,4;NVIDIA GeForce RTX 4050 Laptop GPU
+v3_tarde_2;17h12;yolo26n;18635,0;242,05;76,99;11,335;7,733;2,57;161,5;NVIDIA GeForce RTX 4050 Laptop GPU
+v3_tarde_2;17h12;yolo26l;18635,0;351,57;53,0;16,39;12,858;1,77;163,1;NVIDIA GeForce RTX 4050 Laptop GPU
+v4_18h;18h04;yolo26n;18129,0;249,6;72,63;11,58;7,817;2,42;77,6;NVIDIA GeForce RTX 4050 Laptop GPU
+v4_18h;18h04;yolo26l;18129,0;332,24;54,57;16,506;12,968;1,82;200,1;NVIDIA GeForce RTX 4050 Laptop GPU
+média;;yolo26n;18375,25;244,64;75,12;11,62;7,86;2,5;95,82;
+média;;yolo26l;18375,25;335,71;54,77;16,39;12,86;1,83;193,68;

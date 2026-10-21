@@ -1,0 +1,6 @@
+id;arquivo;usar_na_analise;data;hora_inicio;periodo;iluminacao;inicio_contagem_s;duracao_s;minutos_gabarito;observacoes;contagem_txt
+teste;teste.mp4;nao;2026-10-20;;teste;dia;0;195;1-4;calibracao - NAO entra nos resultados - gabarito feito pelo Claude a partir de quadros (so para testar o pipeline);
+v1_meio_dia;v1_meio_dia.mp4.mp4;sim;2026-10-20;12:10;12h10;dia;0;600;1-10;Video01 - 1280x720;Video01
+v2_tarde_1;v2_tarde_1.mp4.mp4;sim;2026-10-20;15:07;15h07;dia;0;600;1-10;Video02 - 1280x720 - horario no Video02_Gabarito.txt estava errado (12:10), correto 15:07 (confirmado pelo aluno);Video02
+v3_tarde_2;v3_tarde_2.mp4.mp4;sim;2026-10-20;17:12;17h12;dia (fim de tarde);0;600;1-10;Video03 - 1280x720 - ao vivo igual ao gabarito em todas as classes (conferido pelo aluno);Video03
+v4_18h;v4_18h.mp4.mp4;sim;2026-10-20;18:04;18h04;noite;0;600;1-10;Video04 - 1280x720;Video04

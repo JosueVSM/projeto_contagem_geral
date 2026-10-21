@@ -1,0 +1,5 @@
+﻿video;periodo;modelo;quadros_processados;tempo_total_s;quadros_por_segundo;ms_por_quadro_deteccao_rastreamento_mediana;ms_inferencia_mediana;tempo_real_x;memoria_gpu_pico_mb;gpu
+teste;teste;yolo26n;5856,0;79,42;73,74;11,77;7,843;2,46;48,3;NVIDIA GeForce RTX 4050 Laptop GPU
+teste;teste;yolo26l;5856,0;118,69;49,34;17,184;13,29;1,64;182,3;NVIDIA GeForce RTX 4050 Laptop GPU
+média;;yolo26n;5856,0;79,42;73,74;11,77;7,84;2,46;48,3;
+média;;yolo26l;5856,0;118,69;49,34;17,18;13,29;1,64;182,3;

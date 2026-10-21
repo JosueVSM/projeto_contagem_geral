@@ -1,0 +1,21 @@
+# Versões usadas no experimento (Windows 11, Python 3.13, RTX 4050).
+#
+# O PyTorch com suporte à GPU NVIDIA deve ser instalado ANTES, pelo índice
+# oficial (o pacote padrão do PyPI no Windows é só CPU):
+#   pip install torch==2.14.1 torchvision==0.29.1 --index-url https://download.pytorch.org/whl/cu130
+#
+# Depois:
+#   pip install -r requirements.txt
+
+ultralytics==8.4.183
+lap==0.5.13
+opencv-python==5.0.0.93
+numpy==2.5.2
+pandas==3.0.6
+scipy==1.18.1
+matplotlib==3.11.2
+PyYAML==6.0.3
+pytest==9.1.1
+streamlit==1.66.0
+altair==6.3.0
+imageio-ffmpeg==0.6.0

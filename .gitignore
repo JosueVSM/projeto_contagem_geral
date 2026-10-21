@@ -1,0 +1,36 @@
+# --- Arquivo pessoal de continuidade (não vai para o GitHub) ---
+HISTORICO_CLAUDE.md
+
+# --- Vídeos: tamanho e privacidade (rostos e placas) ---
+*.mp4
+*.MP4
+*.mov
+*.MOV
+*.avi
+*.mkv
+*.m4v
+*.hevc
+videos/
+
+# Imagens de quadros do vídeo também podem mostrar rostos/placas
+resultados/**/*.jpg
+resultados/**/*.jpeg
+
+# --- Pesos dos modelos (baixados automaticamente) ---
+*.pt
+*.onnx
+*.engine
+
+# --- Python / ambiente ---
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+runs/
+
+# --- Sistema ---
+.DS_Store
+Thumbs.db
+desktop.ini
+~$*

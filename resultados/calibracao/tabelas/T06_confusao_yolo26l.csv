@@ -1,0 +1,8 @@
+﻿gabarito;carro;moto;bicicleta;pessoa;cachorro;caminhao_onibus;nao_detectado
+carro;26;0;0;0;0;4;0
+moto;0;10;0;0;0;0;0
+bicicleta;0;0;2;0;0;0;0
+pessoa;0;0;0;1;0;0;0
+cachorro;0;0;0;0;0;0;0
+caminhao_onibus;0;0;0;0;0;0;0
+nao_existe;0;0;0;0;0;0;0
