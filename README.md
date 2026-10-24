@@ -2,6 +2,8 @@
 
 Trabalho da disciplina de **Visão Computacional** (pós-graduação).
 
+Aluno: Josué de Vasconcelos Silveira Moreira
+
 Uma câmera fixa (celular) filma uma rua movimentada de Fortaleza. Os objetos que passam são contados de três formas:
 
 1. **Automática:** detecção com **YOLO26** + rastreamento com **ByteTrack** + contagem por **linha virtual**, com dois tamanhos de modelo (nano e large).
