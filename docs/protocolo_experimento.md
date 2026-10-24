@@ -73,7 +73,7 @@ Gravações feitas em **20/10/2026 (terça-feira)**, todas no mesmo dia útil.
 - o erro humano é medido no vídeo inteiro, então o **gabarito cobre os 10 minutos** (seção 7);
 - **não há análise de cansaço do humano**, porque não se sabe em que momento ele errou;
 - o gabarito também foi registrado só como total, então a comparação é **por classe nos 10 minutos**
-  (sem análise por minuto nem por horário).
+  (sem análise por minuto). Entre horários, só a comparação **dia × noite** (12h10 × 18h04, pessoa e moto).
 
 O código aceita três formatos (coluna `minuto` do CSV), caso alguém queira repetir o experimento com mais detalhe:
 
@@ -103,6 +103,8 @@ python scripts/03_gabarito.py --video v1_meio_dia
 - Use velocidade 0,5× e **pause** quando houver muitos objetos juntos. Volte (`a`) sempre que tiver dúvida.
 - Aperte a tecla da classe quando **o meio do objeto** passar pela linha amarela. Errou? `z` desfaz.
 - **Faça o gabarito alguns dias depois** da contagem ao vivo, se possível, para não "lembrar" da contagem do papel.
+- **Quem fez:** o gabarito dos 4 vídeos foi feito por **Gabriela Passos**, que não participou da filmagem nem da contagem ao vivo.
+  Uma recontagem anterior do autor da contagem ao vivo chegou aos mesmos totais por classe.
 
 ## 8. Vídeo de teste (calibração)
 

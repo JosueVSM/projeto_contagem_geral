@@ -16,8 +16,8 @@ Todo script aceita `--help`, que mostra as opções.
 | `02_contar_yolo.py` | Detecta, rastreia e conta com cada modelo. `--salvar-video` grava o vídeo anotado; `--max-segundos 60` processa só o começo (teste rápido); `--mostrar` exibe na tela | vídeo + linha | `resultados/yolo/<video>/<modelo>/` |
 | `03_gabarito.py` | Ferramenta de teclado para a contagem de referência (teclas no topo do arquivo) | vídeo + linha | `dados/gabarito/<video>.csv` |
 | `03b_importar_txt.py` | Importa contagens **totais** escritas em `.txt` (`Video01.txt` = ao vivo, `Video01_Gabarito.txt` = gabarito) e gera os CSVs. Usa a coluna `contagem_txt` de `config/videos.csv`. Não altera os `.txt` | `dados/manual/*.txt` | `dados/manual/<id>.csv`, `dados/gabarito/<id>.csv` |
-| `04_comparar.py` | Cruza YOLO, manual e gabarito e gera as tabelas de **erro por classe** (T01, T02, T03, T03b, T03c), de velocidade (T07) e, só na calibração, precisão/revocação (T05, T06) + `RESUMO.md`. `--teste` processa só os vídeos de teste | tudo acima | `resultados/tabelas/` |
-| `05_graficos.py` | Gráficos de erro por classe e de velocidade em PNG 300 dpi | tabelas | `resultados/graficos/` |
+| `04_comparar.py` | Cruza YOLO, manual e gabarito e gera as tabelas de **erro por classe** (T01, T02, T03, T03b, T03c), **dia × noite** (T04), de velocidade (T07) e, só na calibração, precisão/revocação (T05, T06) + `RESUMO.md`. `--teste` processa só os vídeos de teste | tudo acima | `resultados/tabelas/` |
+| `05_graficos.py` | Gráficos de erro por classe, dia × noite (G05) e velocidade em PNG 300 dpi | tabelas | `resultados/graficos/` |
 | `06_videos_demo.py` | Clipes de **30 s no início e 30 s no fim** de cada vídeo com os dois modelos **lado a lado** contando (caixas, ids, linha, contador acumulado desde 00:00, vindo da contagem oficial do passo 2). H.264, para apresentação e para o painel | vídeo + linha | `~/dados_visao/videos_demo/<id>_inicio.mp4` e `_fim.mp4` (fora do repositório) |
 | `_caminhos.py` | Auxiliar: permite que os scripts importem `src/` | — | — |
 

@@ -17,11 +17,12 @@ O painel abre em `http://localhost:8501`.
 | Aba | Conteúdo |
 |---|---|
 | Erro por classe | Para a soma dos 4 vídeos ou para cada vídeo: total e erro de cada contagem (manual, YOLO-n, YOLO-l), tabela por classe com contagem, erro e erro %, gráfico do erro por classe e, na soma, o WAPE (erro sem compensação entre vídeos) |
+| Dia × noite | 12h10 × 18h04, só pessoa e moto: erro de cada contagem e confiança média do YOLO (tabela `T04` + gráfico `G05`) |
 | Vídeos (demonstração) | Clipes de 30 s (início e fim) de cada vídeo com nano e large contando lado a lado (gerados por `scripts/06_videos_demo.py`) |
 | Velocidade dos modelos | Quadros por segundo e ms por quadro de cada modelo |
 | Gráficos (PNG) | Galeria dos gráficos gerados pelo passo 5 |
 
-Por decisão do trabalho, o painel mostra só o **erro por classe**: não há análise por minuto nem por horário.
+Por decisão do trabalho, o painel mostra o **erro por classe** (sem análise por minuto) e, na aba **Dia × noite**, a comparação 12h × 18h de pessoa e moto.
 
 ## Importante
 - O painel **só lê** o que os scripts já gravaram; não calcula nem inventa nada. Depois de rodar de novo o passo 4 ou o 5, basta atualizar a página (F5): ele percebe sozinho que as tabelas mudaram.

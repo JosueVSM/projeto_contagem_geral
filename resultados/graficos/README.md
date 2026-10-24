@@ -9,6 +9,7 @@ Gerado por `scripts/05_graficos.py`: PNG em 300 dpi, pronto para o trabalho. As 
 | `G03_wape_por_classe_vs_gabarito.png` | Erro percentual (WAPE) por classe, somando os vídeos, com o tamanho da amostra (n) |
 | `G04_vies_por_classe_vs_gabarito.png` | Se cada método conta a mais ou a menos, por classe (soma dos vídeos) |
 | `G03_/G04_..._vs_manual.png` | O mesmo, mas como **diferença** em relação à contagem manual |
+| `G05_dia_x_noite.png` | **Dia × noite** (12h10 × 18h04), pessoa e moto: erro de cada contagem (em cima) e confiança média do YOLO (embaixo) |
 | `G08_velocidade_modelos.png` | Quadros por segundo de cada modelo |
 | `G09_tempo_por_quadro.png` | Distribuição do tempo por quadro |
 

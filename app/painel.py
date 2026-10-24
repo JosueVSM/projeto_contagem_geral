@@ -58,11 +58,12 @@ def fmt_erro(erro, pct, hifen=False):
 
 
 st.title("Contagem classificada de tráfego — erro por classe")
-st.caption("Referência = **gabarito** (contagem minuciosa assistindo ao vídeo). "
+st.caption("Referência = **gabarito** (contagem minuciosa assistindo ao vídeo, feita por Gabriela Passos, que não "
+           "participou da filmagem nem da contagem ao vivo). "
            "Erro = contagem − gabarito: **positivo = contou a mais, negativo = contou a menos**.")
 
-aba_erro, aba_videos, aba_vel, aba_graf = st.tabs(
-    ["Erro por classe", "Vídeos (demonstração)", "Velocidade dos modelos", "Gráficos (PNG)"])
+aba_erro, aba_noite, aba_videos, aba_vel, aba_graf = st.tabs(
+    ["Erro por classe", "Dia × noite", "Vídeos (demonstração)", "Velocidade dos modelos", "Gráficos (PNG)"])
 
 # --- Erro por classe ----------------------------------------------------
 with aba_erro:
@@ -131,6 +132,32 @@ with aba_erro:
                         tabela[f"WAPE {NOMES[m]}"] = w[f"WAPE_{m}"].map(lambda x: f"{x:.1f} %".replace(".", ","))
                 st.dataframe(tabela, hide_index=True, width="stretch")
                 st.caption("Cachorro (n = 2) e caminhão/ônibus (n = 5) têm amostra muito pequena: o % é instável.")
+
+# --- Dia × noite -------------------------------------------------------
+with aba_noite:
+    t = ler("T04_dia_x_noite.csv")
+    if t is None:
+        st.info("Ainda não há a tabela dia × noite. Rode `python scripts/04_comparar.py`.")
+    else:
+        metodos = [m for m in ["manual", *cfg["modelos"]] if f"erro_{m}" in t.columns]
+        st.caption("Mesmos números da aba **Erro por classe**, lado a lado: meio-dia (claro) × 18h (escuro, de propósito). "
+                   "Confiança = média da confiança que o próprio YOLO deu aos objetos que contou (0 a 1).")
+        linhas = []
+        for _, r in t.iterrows():
+            linha = {"Classe": ROTULO.get(r["classe"], r["classe"]), "Horário": f"{r['periodo']} ({r['iluminacao']})",
+                     "Gabarito": int(r["gabarito"])}
+            for m in metodos:
+                linha[f"Erro {NOMES[m].split(' (')[0]}"] = fmt_erro(r[f"erro_{m}"], r[f"erro_pct_{m}"])
+            for m in cfg["modelos"]:
+                if f"conf_media_{m}" in t.columns:
+                    linha[f"Confiança {NOMES[m].split(' (')[0]}"] = f"{r[f'conf_media_{m}']:.2f}".replace(".", ",")
+            linhas.append(linha)
+        st.dataframe(pd.DataFrame(linhas), hide_index=True, width="stretch")
+        png = PASTA_GRAF / "G05_dia_x_noite.png"
+        if png.is_file():
+            st.image(str(png), width="stretch")
+        st.caption("Um vídeo por horário e 19 a 37 objetos por classe: as diferenças são um **indício**, não prova. "
+                   "Luz e movimento da rua mudam juntos.")
 
 # --- Vídeos de demonstração --------------------------------------------
 with aba_videos:

@@ -1,7 +1,7 @@
 """Passo 5: gráficos (PNG, 300 dpi) a partir das tabelas do passo 4.
 
-Por decisão do trabalho, os gráficos tratam só do ERRO POR CLASSE (sem análise
-por minuto nem por horário), além da velocidade dos modelos.
+Por decisão do trabalho, os gráficos tratam do ERRO POR CLASSE (sem análise
+por minuto), da comparação dia × noite (G05) e da velocidade dos modelos.
 
 Uso:
   python scripts/05_graficos.py           # resultados/tabelas -> resultados/graficos
@@ -190,6 +190,56 @@ def main():
                      y=1.08, fontsize=11, color=TINTA)
         fig.tight_layout()
         salvar(fig, saida, "G02_erro_por_classe_por_video.png", gerados)
+
+    # G05: dia × noite (pessoa e moto) --------------------------------------
+    df = ler(tab, "T04_dia_x_noite.csv")
+    if df is not None:
+        metodos = [m for m in ["manual", *modelos] if f"erro_{m}" in df.columns]
+        mods = [m for m in modelos if f"conf_media_{m}" in df.columns]
+        cls_c = list(dict.fromkeys(df["classe"]))
+        periodos = list(dict.fromkeys(df["periodo"]))
+        fig, eixos = plt.subplots(2, len(cls_c), figsize=(3.8 * len(cls_c), 5.6), squeeze=False)
+        for j, c in enumerate(cls_c):
+            d = df[df["classe"] == c].copy()
+            d["rotulo"] = [f"{p} ({il})\ngabarito: {int(g)}" for p, il, g in zip(d["periodo"], d["iluminacao"], d["gabarito"])]
+            rotulos = list(d["rotulo"])
+            # Linha 1: erro de cada contagem (contagem − gabarito), com o valor escrito na barra.
+            ax = eixos[0, j]
+            so_erros = d[["rotulo", *[f"erro_{m}" for m in metodos]]].rename(columns={f"erro_{m}": m for m in metodos})
+            barras_agrupadas(ax, so_erros, rotulos, metodos, "rotulo", None)
+            largura = 0.8 / len(metodos)
+            for i, m in enumerate(metodos):
+                for k, (e, pct) in enumerate(zip(d[f"erro_{m}"], d[f"erro_pct_{m}"])):
+                    txt = f"{int(e):+d}" if e else "0"
+                    if e and pd.notna(pct):
+                        txt += f"\n({pct:+.0f}%)"
+                    txt = txt.replace("-", "−")  # mesmo sinal de menos dos eixos
+                    ax.annotate(txt, (k - 0.4 + largura * (i + 0.5), e), xytext=(0, 2 if e >= 0 else -2),
+                                textcoords="offset points", ha="center", va="bottom" if e >= 0 else "top",
+                                fontsize=6.5, color=TINTA_2)
+            lim = max(1, df[[f"erro_{m}" for m in metodos]].abs().to_numpy().max()) * 1.6
+            ax.set_ylim(-lim, lim)
+            ax.set_ylabel("contagem − gabarito")
+            ax.set_title(f"{ROTULO_CLASSE.get(c, c)}: erro de cada contagem", loc="left")
+            ax.tick_params(axis="x", labelsize=7.5)
+            # Linha 2: confiança média que o YOLO deu aos objetos que contou.
+            ax = eixos[1, j]
+            so_conf = d[["rotulo", *[f"conf_media_{m}" for m in mods]]].rename(columns={f"conf_media_{m}": m for m in mods})
+            barras_agrupadas(ax, so_conf, rotulos, mods, "rotulo", None)
+            largura = 0.8 / len(mods)
+            for i, m in enumerate(mods):
+                for k, v in enumerate(d[f"conf_media_{m}"]):
+                    if pd.notna(v):
+                        ax.annotate(f"{v:.2f}".replace(".", ","), (k - 0.4 + largura * (i + 0.5), v), xytext=(0, 2),
+                                    textcoords="offset points", ha="center", va="bottom", fontsize=7, color=TINTA_2)
+            ax.set_ylim(0, 1)
+            ax.set_ylabel("confiança média do YOLO")
+            ax.set_title(f"{ROTULO_CLASSE.get(c, c)}: confiança do modelo", loc="left")
+            ax.tick_params(axis="x", labelsize=7.5)
+        legenda_figura(fig, metodos)
+        fig.suptitle(f"Dia × noite ({' × '.join(periodos)}): pessoa e moto", y=1.06, fontsize=11, color=TINTA)
+        fig.tight_layout()
+        salvar(fig, saida, "G05_dia_x_noite.png", gerados)
 
     # G08 / G09: velocidade dos modelos -------------------------------------
     df = ler(tab, "T07_desempenho_modelos.csv")

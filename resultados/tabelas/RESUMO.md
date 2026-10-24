@@ -75,6 +75,17 @@ Colunas sem prefixo = total contado; WAPE_ = erro percentual contra o gabarito.
 
 erro = contagem − gabarito (negativo = contou a menos); erro_pct = erro ÷ gabarito.
 
+## Dia × noite (pessoa e moto)
+
+| classe | periodo | iluminacao | gabarito | manual | erro_manual | erro_pct_manual | yolo26n | erro_yolo26n | erro_pct_yolo26n | yolo26l | erro_yolo26l | erro_pct_yolo26l | conf_media_yolo26n | conf_media_yolo26l |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| pessoa | 12h10 | dia | 19 | 20 | 1 | 5,3 | 19 | 0 | 0 | 24 | 5 | 26,3 | 0,551 | 0,704 |
+| pessoa | 18h04 | noite | 20 | 23 | 3 | 15,0 | 15 | -5 | -25,0 | 22 | 2 | 10,0 | 0,546 | 0,64 |
+| moto | 12h10 | dia | 25 | 25 | 0 | 0 | 22 | -3 | -12,0 | 23 | -2 | -8,0 | 0,671 | 0,809 |
+| moto | 18h04 | noite | 37 | 40 | 3 | 8,1 | 42 | 5 | 13,5 | 39 | 2 | 5,4 | 0,547 | 0,737 |
+
+conf_media_ = confiança média que o YOLO deu aos objetos que ele contou (0 a 1).
+
 ## Desempenho (velocidade)
 
 | video | periodo | modelo | quadros_processados | tempo_total_s | quadros_por_segundo | ms_por_quadro_deteccao_rastreamento_mediana | ms_inferencia_mediana | tempo_real_x | memoria_gpu_pico_mb | gpu |

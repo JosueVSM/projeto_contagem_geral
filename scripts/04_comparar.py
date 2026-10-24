@@ -15,12 +15,14 @@ Tabelas (CSV com ';' e vírgula decimal, abre direto no Excel):
   T03_erro_vs_gabarito.csv          ERRO de cada método (manual, YOLO-n, YOLO-l) contra o gabarito
   T03b_erro_por_classe_todos.csv    erro por classe, somando os vídeos (contagens + WAPE)
   T03c_erro_por_classe_por_video.csv  ERRO DE CADA CONTAGEM por classe e vídeo: contagem, erro (contagem − gabarito) e erro %
+  T04_dia_x_noite.csv               dia × noite (config analise.comparar_horarios): erro de cada contagem
+                                    e confiança média do YOLO, só nos vídeos e classes escolhidos
   T05_precisao_revocacao.csv        precisão / revocação / F1 por classe (só se o gabarito for por evento)
   T06_confusao_<modelo>.csv         matriz de confusão gabarito x modelo (só se o gabarito for por evento)
   T07_desempenho_modelos.csv        velocidade de processamento de cada modelo
   RESUMO.md                         principais tabelas em Markdown
 
-(Por decisão do trabalho, NÃO há análise por minuto nem por horário: o foco é o erro por classe.)
+(Por decisão do trabalho, NÃO há análise por minuto. Entre horários, só a comparação dia × noite da T04.)
 """
 
 import _caminhos  # noqa: F401
@@ -83,6 +85,7 @@ def main():
     pilhas = {}  # (referencia, metodo) -> {"ref": [...], "met": [...]} para os totais "todos"
     confusao = {m: None for m in modelos}
     gab_todos, pred_todos = [], {m: [] for m in modelos}
+    confianca = {}  # (video, modelo, classe) -> confiança média do YOLO nos objetos que ele contou
     avisos = []
 
     for ordem, (_, v) in enumerate(videos.iterrows()):
@@ -98,6 +101,9 @@ def main():
             if (pasta / "eventos.csv").is_file():
                 ev = ler_csv_flexivel(pasta / "eventos.csv")
                 ev["t_video_s"] = ev["t_video_s"].astype(float) if len(ev) else pd.Series(dtype=float)
+                if len(ev) and "conf_media" in ev.columns:
+                    for c, conf in ev.groupby("classe")["conf_media"]:
+                        confianca[(vid, m, c)] = float(conf.astype(float).mean())
                 eventos[m] = ev[["t_video_s", "classe"]] if len(ev) else pd.DataFrame(columns=["t_video_s", "classe"])
                 tabelas[m] = contagem_por_minuto(eventos[m], inicio, dur)
                 with open(pasta / "desempenho.json", encoding="utf-8") as f:
@@ -275,6 +281,32 @@ def main():
             titulo = "Soma dos 4 vídeos" if vid == "todos" else f"{vid} ({per})"
             resumo.extend([f"## Erro de cada contagem por classe — {titulo}", "", tabela_md(t), ""])
         resumo.extend(["erro = contagem − gabarito (negativo = contou a menos); erro_pct = erro ÷ gabarito.", ""])
+
+        # T04: dia × noite. Mesmos números da T03c, só nos vídeos/classes escolhidos,
+        # + a confiança média que o próprio YOLO deu aos objetos que contou.
+        comp = cfg.get("analise", {}).get("comparar_horarios") or {}
+        vids_c = [x for x in comp.get("videos", []) if x in set(tab["video"])]
+        if len(vids_c) >= 2:
+            ilum = dict(zip(videos["id"], videos["iluminacao"]))
+            linhas = []
+            for c in comp.get("classes", []):
+                for x in vids_c:
+                    r = tab[(tab["video"] == x) & (tab["classe"] == c)]
+                    if r.empty:
+                        continue
+                    r = r.iloc[0].to_dict() | {"iluminacao": ilum.get(x, "")}
+                    for m in modelos:
+                        conf = confianca.get((x, m, c))
+                        r[f"conf_media_{m}"] = round(conf, 3) if conf is not None else np.nan
+                    linhas.append(r)
+            if linhas:
+                d04 = pd.DataFrame(linhas)
+                d04 = ordem_cols(d04, ["classe", "video", "periodo", "iluminacao"])
+                salvar(d04, saida, "T04_dia_x_noite.csv")
+                resumo.extend(["## Dia × noite (pessoa e moto)", "", tabela_md(d04.drop(columns=["video"])), "",
+                               "conf_media_ = confiança média que o YOLO deu aos objetos que ele contou (0 a 1).", ""])
+        elif comp.get("videos"):
+            avisos.append(f"dia × noite: precisa de 2 vídeos com gabarito entre {comp['videos']} -> T04 não gerada")
 
     publicar(t05, "T05_precisao_revocacao.csv", ["video", "periodo", "modelo", "classe"],
              "Precisão / revocação (todas as classes)", lambda d: d[d["classe"] == "todas"])

@@ -71,6 +71,11 @@ analise:
   # comparar, as classes listadas são somadas na classe agrupada.
   agrupar_classes:
     caminhao_onibus: [caminhao, onibus]
+  # Dia × noite (pedido do professor): o mesmo erro por classe, só nestes
+  # vídeos e classes, lado a lado. O 1º vídeo é o dia, o 2º a noite.
+  comparar_horarios:
+    videos: [v1_meio_dia, v4_18h]
+    classes: [pessoa, moto]
 
 comparacao:
   # Janela de tempo (s) para considerar que o YOLO e o gabarito marcaram o

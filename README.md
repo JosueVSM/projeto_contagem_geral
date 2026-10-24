@@ -8,7 +8,7 @@ Uma câmera fixa (celular) filma uma rua movimentada de Fortaleza. Os objetos qu
 
 1. **Automática:** detecção com **YOLO26** + rastreamento com **ByteTrack** + contagem por **linha virtual**, com dois tamanhos de modelo (nano e large).
 2. **Manual:** contagem feita **ao vivo, da janela**, no papel: o **total** de cada classe nos 10 minutos.
-3. **Gabarito:** revisão cuidadosa do vídeo inteiro, com pausa e retrocesso, usada como referência para medir o erro dos dois métodos acima.
+3. **Gabarito:** revisão cuidadosa do vídeo inteiro, com pausa e retrocesso, feita por **Gabriela Passos**, pessoa que não participou da filmagem nem da contagem ao vivo. É a referência usada para medir o erro dos dois métodos acima.
 
 O objetivo é mostrar que **os dois métodos erram**, e de formas diferentes. O modelo erra com iluminação, oclusão e classes parecidas. O humano erra por cansaço, distração e objetos que passam despercebidos.
 
@@ -36,8 +36,9 @@ O objetivo é mostrar que **os dois métodos erram**, e de formas diferentes. O 
 1. Medidos contra um gabarito, quanto **cada** contagem erra (humano ao vivo, YOLO-n e YOLO-l), **por classe**?
 2. Quanto a contagem do YOLO difere da contagem manual, por classe?
 3. O modelo maior (YOLO26-l) é mais preciso que o menor (YOLO26-n)? Quanto mais lento ele é?
+4. No escuro, o erro muda? Comparação **dia × noite** (12h10 × 18h04) para **pessoa e moto**.
 
-*Por decisão do trabalho, o foco é o **erro por classe** nos 10 minutos de cada vídeo: não há análise por minuto (cansaço) nem comparação entre horários.*
+*Por decisão do trabalho, o foco é o **erro por classe** nos 10 minutos de cada vídeo: não há análise por minuto (cansaço). Entre horários, só a comparação dia × noite da pergunta 4.*
 
 ## Metodologia
 
@@ -64,6 +65,8 @@ A contagem manual é ao vivo e o vídeo é analisado depois. Para os minutos bat
 
 ### Gabarito
 Os **10 minutos** de cada vídeo são recontados com calma pela ferramenta [`scripts/03_gabarito.py`](scripts/03_gabarito.py): vídeo em câmera lenta, pausa e retrocesso, uma tecla por classe. Cada marcação guarda o instante exato. A ferramenta **não mostra as detecções do YOLO**, para não influenciar o gabarito. O vídeo inteiro é revisado porque a contagem manual é um total dos 10 minutos: para comparar, o gabarito precisa cobrir a mesma janela.
+
+**Quem fez o gabarito:** **Gabriela Passos**, pessoa que não participou da filmagem nem da contagem ao vivo. Assim, a contagem ao vivo não é medida contra a revisão do próprio contador. Uma recontagem feita antes pelo autor da contagem ao vivo chegou aos **mesmos totais por classe** nos 4 vídeos.
 
 ## Decisões técnicas (e por quê)
 
@@ -99,6 +102,7 @@ Todos os parâmetros estão em [`config/config.yaml`](config/config.yaml).
 | **Precisão / Revocação / F1** | *Só na calibração (vídeo de teste), onde existe gabarito por evento; nos 4 vídeos o gabarito tem só totais.* |
 | *(como é calculado)* | Cada cruzamento do YOLO é casado com um cruzamento do gabarito da mesma classe, até **1,5 s** de diferença, pelo algoritmo húngaro. Precisão: dos que o YOLO contou, quantos existiam. Revocação: dos que existiam, quantos o YOLO contou. |
 | **Matriz de confusão** | *Também só na calibração.* Mostra trocas de classe (ex.: carro → caminhão), objetos não detectados e contagens que não existem. |
+| **Confiança média** | Média da confiança (0 a 1) que o YOLO deu a cada objeto que contou. Não depende do gabarito; usada na comparação dia × noite. |
 | **Velocidade** | Quadros por segundo, ms por quadro (mediana), memória de GPU. |
 
 ## Estrutura do repositório
@@ -106,7 +110,7 @@ Todos os parâmetros estão em [`config/config.yaml`](config/config.yaml).
 ```
 ├── config/        configuração: parâmetros, lista de vídeos, linhas de contagem
 ├── src/           código reutilizável (contagem, métricas, leitura de dados)
-├── scripts/       passos 00 a 05, executados em ordem
+├── scripts/       passos 00 a 06, executados em ordem
 ├── dados/         contagens manuais digitadas e gabaritos
 ├── modelos/       pesos do YOLO (baixados automaticamente; não vão para o GitHub)
 ├── resultados/    saídas do YOLO, tabelas e gráficos
@@ -174,8 +178,8 @@ Os vídeos mostram rostos e placas. Por isso, **nenhum vídeo ou quadro de víde
 ## Limitações
 
 - A contagem manual registra só o **total** dos 10 minutos (escolha para simplificar a contagem ao vivo). Por isso não é possível medir **quando** o humano errou nem avaliar cansaço. Erros de sinais opostos (um objeto esquecido e outro contado a mais) se anulam no total, então o erro humano medido é um **limite inferior** do erro real.
-- A tendência do erro do YOLO ao longo do vídeo usa 10 pontos por vídeo; é um **indício**, não prova.
-- O gabarito foi feito pela mesma pessoa que fez a contagem manual, ainda que com pausa e revisão.
+- A comparação dia × noite usa **um vídeo por horário**: luz e movimento da rua mudam juntos, então é um **indício**, não prova.
+- O gabarito foi feito por uma só pessoa independente (Gabriela Passos). Os totais dela coincidiram com uma recontagem anterior do autor, mas totais iguais não garantem que os mesmos objetos foram contados (um esquecido e um a mais se anulam).
 - A contagem manual é ao vivo e enxerga a cena de um ângulo um pouco diferente do da câmera.
 - O modelo foi usado sem ajuste fino (*fine-tuning*) para a cena.
 - O **gabarito tem só o total** de cada classe: dá para medir quanto cada método erra na contagem, mas não quais objetos específicos ele errou (precisão, revocação e matriz de confusão por evento só existem na calibração).
@@ -184,7 +188,7 @@ Os vídeos mostram rostos e placas. Por isso, **nenhum vídeo ou quadro de víde
 
 ## Resultados
 
-Números gerados por `scripts/04_comparar.py` (tabelas em [`resultados/tabelas/`](resultados/tabelas/), resumo em [`RESUMO.md`](resultados/tabelas/RESUMO.md)) e `scripts/05_graficos.py` (gráficos em [`resultados/graficos/`](resultados/graficos/)). Referência = **gabarito** (total por classe, contado minuciosamente assistindo ao vídeo). 4 vídeos × 10 min, RTX 4050 Laptop.
+Números gerados por `scripts/04_comparar.py` (tabelas em [`resultados/tabelas/`](resultados/tabelas/), resumo em [`RESUMO.md`](resultados/tabelas/RESUMO.md)) e `scripts/05_graficos.py` (gráficos em [`resultados/graficos/`](resultados/graficos/)). Referência = **gabarito** (total por classe, contado minuciosamente assistindo ao vídeo por Gabriela Passos, que não participou da filmagem nem da contagem ao vivo). 4 vídeos × 10 min, RTX 4050 Laptop.
 
 ### 1. Erro total de cada método (soma dos 4 vídeos)
 
@@ -194,7 +198,7 @@ Números gerados por `scripts/04_comparar.py` (tabelas em [`resultados/tabelas/`
 | YOLO26-n (nano) | 553 | 588 | −6,0 % | 8,3 % |
 | YOLO26-l (large) | 580 | 588 | −1,4 % | 8,5 % |
 
-- Neste experimento, a **contagem humana ao vivo errou menos** que os dois modelos.
+- Neste experimento, medida contra um gabarito independente, a **contagem humana ao vivo errou menos** que os dois modelos.
 - O **large** tem viés total quase nulo, mas o mesmo WAPE do nano: os erros dele **se compensam**. Ele conta a mais em caminhão/ônibus (12 contra 5) e, em alguns vídeos, pessoas (24 contra 19 às 12h10); e conta a menos carros (317 contra 328) e motos (145 contra 152). Um total certo não significa classes certas.
 
 ### 2. Erro por classe (WAPE, soma dos vídeos)
@@ -235,7 +239,25 @@ A mesma tabela, vídeo a vídeo, está em [`RESUMO.md`](resultados/tabelas/RESUM
 
 Repare que, na soma, o large parece quase perfeito em **pessoa** (+1). Mas vídeo a vídeo ele errou +5, −4, −2 e +2. Por isso o WAPE da seção 2 (16,9 %) é a medida mais honesta do erro.
 
-### 4. Velocidade (média dos 4 vídeos, sem gravar vídeo anotado)
+### 4. Dia × noite: pessoa e moto (12h10 × 18h04)
+
+O vídeo das 18h04 foi gravado já no escuro, de propósito. Aqui ele é comparado com o do meio-dia, nas duas classes mais sensíveis à luz: **pessoa** e **moto**. Os números são os mesmos da seção 3, colocados lado a lado (tabela `resultados/tabelas/T04_dia_x_noite.csv`). A **confiança** é a média da confiança que o próprio YOLO deu aos objetos que contou (0 a 1) e não depende do gabarito.
+
+![Dia × noite](resultados/graficos/G05_dia_x_noite.png)
+
+| Classe | Horário | Gabarito | Erro manual | Erro YOLO-n | Erro YOLO-l | Confiança YOLO-n | Confiança YOLO-l |
+|---|---|---:|---:|---:|---:|---:|---:|
+| Pessoa | 12h10 (dia) | 19 | +1 (+5,3 %) | 0 | +5 (+26,3 %) | 0,55 | 0,70 |
+| Pessoa | 18h04 (noite) | 20 | +3 (+15,0 %) | −5 (−25,0 %) | +2 (+10,0 %) | 0,55 | 0,64 |
+| Moto | 12h10 (dia) | 25 | 0 | −3 (−12,0 %) | −2 (−8,0 %) | 0,67 | 0,81 |
+| Moto | 18h04 (noite) | 37 | +3 (+8,1 %) | +5 (+13,5 %) | +2 (+5,4 %) | 0,55 | 0,74 |
+
+- **Pessoa:** o movimento foi quase igual nos dois horários (19 e 20). Às 18h04 o **nano contou só 15 das 20 pessoas** (−5, −25 %), contra nenhum erro ao meio-dia. O large errou a mais nos dois horários (+5 de dia, +2 à noite), então não piorou no escuro. A confiança do large caiu de 0,70 para 0,64; a do nano ficou em 0,55.
+- **Moto:** no escuro os dois modelos passaram de **contar a menos** (−3 e −2 ao meio-dia) para **contar a mais** (+5 e +2). A confiança caiu nos dois: nano de 0,67 para 0,55, large de 0,81 para 0,74. Pelo total não dá para saber o motivo do erro a mais, porque um objeto perdido e um contado a mais se anulam.
+- **Humano:** a contagem ao vivo também errou mais às 18h04, contando a mais nas duas classes (+3 pessoas, +3 motos), contra +1 e 0 ao meio-dia.
+- **Em resumo:** no escuro, o YOLO fica menos confiante em moto (nos dois modelos) e em pessoa (no large), e o nano conta pessoas a menos. O large foi o mais estável entre os dois horários. Com um vídeo por horário e 19 a 37 objetos por classe, isso é um **indício**, não prova. Além disso, a luz não é a única coisa que muda: às 18h04 passaram mais motos (37 contra 25).
+
+### 5. Velocidade (média dos 4 vídeos, sem gravar vídeo anotado)
 
 | Modelo | Quadros/s | ms por quadro (detecção + rastreamento) | ms só inferência | × tempo real | Memória GPU |
 |---|---:|---:|---:|---:|---:|
@@ -244,7 +266,7 @@ Repare que, na soma, o large parece quase perfeito em **pessoa** (+1). Mas víde
 
 O large é cerca de **1,4× mais lento por quadro**, mas os dois processam mais rápido que o tempo real (30 quadros/s). Na GPU usada, velocidade não seria o fator decisivo entre os dois modelos.
 
-### 5. Calibração: precisão e revocação (vídeo de teste, 3 min 15 s)
+### 6. Calibração: precisão e revocação (vídeo de teste, 3 min 15 s)
 
 Só no vídeo de teste existe gabarito **por evento**: cada objeto foi marcado no instante em que cruza a linha, pela ferramenta `03_gabarito.py`. Esse gabarito foi feito pelo Claude, revisando o vídeo quadro a quadro. Não é resultado do experimento; serve para entender *como* os modelos erram. Total: 43 objetos.
 
@@ -253,7 +275,7 @@ Só no vídeo de teste existe gabarito **por evento**: cada objeto foi marcado n
 | YOLO26-n | 0,977 | 1,000 | 1 reboque contado como caminhão |
 | YOLO26-l | 0,907 | 0,907 | 4 picapes classificadas como caminhão |
 
-### 6. Clipes de demonstração
+### 7. Clipes de demonstração
 
 `scripts/06_videos_demo.py` gera, para cada vídeo, 30 s do início e 30 s do fim da contagem, com nano e large **lado a lado** contando. O contador é **acumulado desde o início da contagem** (vem da contagem oficial do passo 2): o clipe final termina exatamente no total das tabelas. Os clipes ficam fora do repositório (`~/dados_visao/videos_demo/`) por mostrarem rostos e placas, e aparecem na aba **Vídeos (demonstração)** do painel (`streamlit run app/painel.py`).
 

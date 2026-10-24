@@ -4,7 +4,7 @@ Contagem de **referência** (gabarito), usada para medir o erro tanto do YOLO qu
 
 Dois formatos (o código detecta sozinho):
 
-**a) Só contagens** (vídeos do experimento): gerado por `scripts/03b_importar_txt.py` a partir de `dados/manual/VideoNN_Gabarito.txt`. Mesmo formato da contagem manual (linha `total`). Permite medir o erro de contagem de cada método, mas **não** precisão/revocação por evento.
+**a) Só contagens** (vídeos do experimento): gerado por `scripts/03b_importar_txt.py` a partir de `dados/manual/VideoNN_Gabarito.txt`. Mesmo formato da contagem manual (linha `total`). Permite medir o erro de contagem de cada método, mas **não** precisão/revocação por evento. Gabarito dos 4 vídeos feito por **Gabriela Passos**, que não participou da filmagem nem da contagem ao vivo. Os totais dela coincidiram com uma recontagem anterior do autor.
 
 **b) Por evento**, gerado pela ferramenta `scripts/03_gabarito.py`, uma linha por objeto marcado:
 
